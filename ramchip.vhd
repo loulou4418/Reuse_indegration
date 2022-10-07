@@ -11,13 +11,17 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.Numeric_Std.all;
 
 entity sync_ram is
+  generic (
+    DBus_Size  : INTEGER := 8;
+    ABus_Size  : INTEGER := 10
+  );
   port (
     clock   : in  std_logic;
     we      : in  std_logic;
     cs      : in  std_logic;
-    address : in  unsigned;
-    datain  : in  unsigned;
-    dataout : out unsigned
+    address : in  unsigned(ABus_Size-1 downto 0);
+    datain  : in  unsigned(DBus_Size-1 downto 0);
+    dataout : out unsigned(DBus_Size-1 downto 0)
   );
 end entity sync_ram;
 

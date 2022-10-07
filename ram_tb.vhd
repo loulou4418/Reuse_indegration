@@ -9,9 +9,12 @@ entity Ram_TB is
 end entity Ram_TB;
 
 architecture Bench of Ram_TB is
+  
+  constant   cte_DBus_Size  : INTEGER := 8;
+  constant   cte_ABus_Size  : INTEGER := 10;
 
-  signal Address :unsigned(9 downto 0);
-  signal DataIn, DataOut :unsigned(7 downto 0);
+  signal Address :unsigned(cte_ABus_Size-1 downto 0);
+  signal DataIn, DataOut :unsigned(cte_DBus_Size-1 downto 0);
   signal WE : Std_logic;
   signal CS : Std_logic := '0';
   signal clock : Std_logic;
@@ -20,6 +23,7 @@ architecture Bench of Ram_TB is
 begin
 
   UUT: entity work.sync_ram(RTL)
+  generic map(cte_DBus_Size, cte_ABus_Size)
   port map (
     clock   => clock,
     we      => WE,
@@ -90,11 +94,12 @@ architecture Bench2 of Ram_TB is
 begin
 
   UUT: entity work.sync_ram(RTL)
+  generic map(8, 8)
   port map (
     clock   => clock,
     we      => WE,
     cs      => CS,
-    address  => Address,
+    address => Address,
     datain  => DataIn,
     DataOut => DataOut
   );
