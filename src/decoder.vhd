@@ -14,11 +14,9 @@ end entity address_decode;
 
 architecture address_decode of address_decode is
 
-constant ONE : unsigned(2**Entry_Size-1 downto 0) := to_unsigned(1, 2**Entry_Size);
-
 begin  
 
   -- left shift performed on unsigned is a logical shift
-  CS_ram <= ONE & address_msb;
+  CS_ram <= shift_left(to_unsigned(1, 2**Entry_Size), to_integer(address_msb));
 
 end architecture address_decode;
