@@ -14,6 +14,7 @@ entity sync_ram is
   port (
     clock   : in  std_logic;
     we      : in  std_logic;
+    cs      : in  std_logic;
     address : in  unsigned;
     datain  : in  unsigned;
     dataout : out unsigned
@@ -32,13 +33,13 @@ begin
 
   begin
     if rising_edge(clock) then
-      if we = '1' then
-        ram(to_integer(address)) <= datain;
+        if (we = '1') then
+          ram(to_integer(address)) <= datain;
+        end if;
+        read_address <= address;
       end if;
-      read_address <= address;
-    end if;
   end process RamProc;
 
-  dataout <= ram(to_integer(read_address));
+  dataout <= ram(to_integer(read_address)) when cs = '1' else (others => 'Z');
 
 end architecture RTL;

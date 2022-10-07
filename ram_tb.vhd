@@ -13,6 +13,7 @@ architecture Bench of Ram_TB is
   signal Address :unsigned(9 downto 0);
   signal DataIn, DataOut :unsigned(7 downto 0);
   signal WE : Std_logic;
+  signal CS : Std_logic := '0';
   signal clock : Std_logic;
   signal StopClock : boolean := FALSE;
 
@@ -22,6 +23,7 @@ begin
   port map (
     clock   => clock,
     we      => WE,
+    cs      => CS,
     address => Address,
     datain  => DataIn,
     DataOut => DataOut
@@ -52,6 +54,7 @@ begin
     datain <= "00000100";
 
     wait until rising_edge(clock); -- cycle 3
+    cs <= '1';
     datain <=    "00000111";
     address <= "0000000010";
 
@@ -78,6 +81,7 @@ architecture Bench2 of Ram_TB is
   signal Address :unsigned(9 downto 0);
   signal DataIn, DataOut :unsigned(7 downto 0);
   signal WE : Std_logic;
+  signal CS : Std_logic := '1';
   signal clock : Std_logic;
   signal StopClock : boolean := FALSE;
 
@@ -89,7 +93,8 @@ begin
   port map (
     clock   => clock,
     we      => WE,
-    address => Address,
+    cs      => CS,
+    address  => Address,
     datain  => DataIn,
     DataOut => DataOut
   );
