@@ -4,7 +4,8 @@ TOPLEVEL_LANG = vhdl
 SIM = ghdl
 
 # Directories definition
-TEST_DIRECTORY = $(shell pwd)
+COCOTB_DIRECTORY = $(shell pwd)
+TEST_DIRECTORY = $(shell dirname $(COCOTB_DIRECTORY))
 SRC_DIRECTORY = $(shell dirname $(TEST_DIRECTORY))/src/
 
 # Default vhdl file to test

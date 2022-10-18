@@ -37,11 +37,13 @@ begin
 
   begin
     if rising_edge(clock) then
-        if (we = '1' and cs = '1') then
+      if (cs = '1') then
+        if (we = '1') then
           ram(to_integer(address)) <= datain;
         end if;
         read_address <= address;
       end if;
+    end if;
   end process RamProc;
 
   dataout <= ram(to_integer(read_address)) when cs = '1' else (others => 'Z');
