@@ -6,7 +6,7 @@ SIM = ghdl
 # Directories definition
 COCOTB_DIRECTORY = $(shell pwd)
 TEST_DIRECTORY = $(shell dirname $(COCOTB_DIRECTORY))
-SRC_DIRECTORY = $(shell dirname $(TEST_DIRECTORY))/src/
+SRC_DIRECTORY = $(shell dirname $(TEST_DIRECTORY))/design/source
 
 # Default vhdl file to test
 VHDL_FILE = decoder.vhd

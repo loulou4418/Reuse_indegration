@@ -82,19 +82,22 @@ end architecture Bench;
 
 architecture Bench2 of Ram_TB is
 
+  constant   cte_DBus_Size  : INTEGER := 8;
+  constant   cte_ABus_Size  : INTEGER := 10;
+  
   signal Address :unsigned(9 downto 0);
   signal DataIn, DataOut :unsigned(7 downto 0);
   signal WE : Std_logic;
   signal CS : Std_logic := '1';
   signal clock : Std_logic;
   signal StopClock : boolean := FALSE;
-
+  
   signal ok: boolean := true;
-
-begin
-
-  UUT: entity work.sync_ram(RTL)
-  generic map(8, 8)
+  
+  begin
+    
+    UUT: entity work.sync_ram(RTL)
+    generic map(cte_DBus_Size, cte_ABus_Size)
   port map (
     clock   => clock,
     we      => WE,
