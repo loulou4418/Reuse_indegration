@@ -4,3 +4,4 @@ __pycache__/
 *.cf
 *.ghw
 document/
+istyle-verilog-formatter/
