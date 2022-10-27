@@ -21,6 +21,7 @@ architecture cell of sync_quadram is
 
     signal cs_ram         : unsigned(2**Nb_MSB-1 downto 0);
     alias address_msb_in  : unsigned(Nb_MSB-1 downto 0) is address(ABus_Size-1 downto ABus_Size-Nb_MSB);
+    alias address_in      : unsigned(ABus_Size-Nb_MSB-1 downto 0) is address(ABus_Size-Nb_MSB-1 downto 0);
 
 begin  
 
@@ -33,12 +34,12 @@ begin
 
     boucle:for I in 0 to 2**Nb_MSB-1 generate
         RAM: entity work.sync_ram(RTL)
-        generic map (DBus_Size, ABus_Size)
+        generic map (DBus_Size, ABus_Size-Nb_MSB)
         port map (
             clock   => clock,
             we      => we,
             cs      => cs_ram(I),
-            address => address,
+            address => address_in,
             datain  => datain,
             dataout => dataout
         );
