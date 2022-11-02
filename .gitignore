@@ -3,5 +3,5 @@ __pycache__/
 *.xml
 *.cf
 *.ghw
-document/
+document/pdf
 istyle-verilog-formatter/
