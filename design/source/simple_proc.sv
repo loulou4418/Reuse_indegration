@@ -143,11 +143,11 @@ module simple_proc #(
                 end
                 `LDA:
                 begin
-                    reg_A[`AA] = `BB;		//load 'BB into reg_A
+                    reg_A = `BB;		//load 'BB into reg_A
                 end
                 `LDB:
                 begin
-                    reg_B[`AA] = `BB;		//load 'BB into reg_B
+                    reg_B = `BB;		//load 'BB into reg_B
                 end
                 `HLT:
                     $finish ;                   // halt
