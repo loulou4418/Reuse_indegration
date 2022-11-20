@@ -55,7 +55,15 @@ int main(int argc, char **argv, char **env)
 
     dut->simple_proc__DOT__MEM[3] = MUL.val;
 
-    for (uint16_t i = 4; i < START_DATA_SEGMENT - 1; i++)
+    /* simple test of strore instruction STR */
+    STR_t STR2;
+    STR2.field.OPCODE = 0b0011;
+    STR2.field.IM = 0;
+    STR2.field.AA = 0x00; /* idenfiable random value */
+    STR2.field.BB = START_DATA_SEGMENT + 2;
+    dut->simple_proc__DOT__MEM[4] = STR2.val;
+
+    for (uint16_t i = 5; i < START_DATA_SEGMENT - 1; i++)
     {
         // fill the rest of memory with NOP
         // if not the defaul opcode is 0 and the simulation stops
@@ -78,6 +86,8 @@ int main(int argc, char **argv, char **env)
             dut->nrst = 1;
         }
 
+         dut->datain = 0x0; /* set datain to zero if not written later */
+
         /* assert first STR test */
         if (dut->simple_proc__DOT__IR == STR.val && dut->clk == 1)
         {
@@ -93,37 +103,47 @@ int main(int argc, char **argv, char **env)
             }
         }
 
-        /* assert first LDA test */
-        if (dut->simple_proc__DOT__IR == LDA.val)
+        /* assert first LDA test
+            The memory delay is simulated by seting the value on of datain on rising edge */
+        if (dut->simple_proc__DOT__IR == LDA.val && dut->clk == 0)
         {
-            dut->datain = 0x19; /* give ram cell value */
+            if (dut->we == 0 && dut->address == 0x78)
+            {
+                dut->datain = 0x19; /* give ram cell value */
+                dut->eval();
 
-            if ((dut->address == 0x78) && dut->we == 0 && dut->simple_proc__DOT__reg_A == 0x19)
-            {
-                printf("Succes asserting LDA test 1 \n");
-            }
-            else
-            {
-                printf("LDA test 1 failed \n");
+                if (dut->simple_proc__DOT__reg_A == 0x19)
+                {
+                    printf("Succes asserting LDA test 1 \n");
+                }
+                else
+                {
+                    printf("LDA test 1 failed \n");
+                }
             }
         }
 
-        /* assert first LDA test */
-        if (dut->simple_proc__DOT__IR == LDB.val)
+        /* assert first LDB test
+    The memory delay is simulated by seting the value on of datain on rising edge */
+        if (dut->simple_proc__DOT__IR == LDB.val && dut->clk == 0)
         {
-            dut->datain = 0x02; /* give ram cell value */
+            if (dut->we == 0 && dut->address == 0x91)
+            {
+                dut->datain = 0x02; /* give ram cell value */
+                dut->eval();
 
-            if ((dut->address == 0x91) && dut->we == 0 && dut->simple_proc__DOT__reg_B == 0x02)
-            {
-                printf("Succes asserting LDB test 1 \n");
-            }
-            else
-            {
-                printf("LDB test 1 failed \n");
+                if (dut->simple_proc__DOT__reg_B == 0x02)
+                {
+                    printf("Succes asserting LDB test 1 \n");
+                }
+                else
+                {
+                    printf("LDB test 1 failed \n");
+                }
             }
         }
 
-        /* assert first LDA test */
+        /* assert first MUL test */
         if (dut->simple_proc__DOT__IR == MUL.val)
         {
             if (dut->simple_proc__DOT__reg_A == (0x02 * 0x19))
@@ -133,6 +153,20 @@ int main(int argc, char **argv, char **env)
             else
             {
                 printf("MUL test 1 failed \n");
+            }
+        }
+
+        /* assert first MUL test */
+        if (dut->simple_proc__DOT__IR == STR2.val)
+        {
+            if ((dut->address == START_DATA_SEGMENT + 2) &&
+                (dut->dataout == dut->simple_proc__DOT__reg_A))
+            {
+                printf("Succes asserting STR test 2 \n");
+            }
+            else
+            {
+                printf("STR test 2 failed. Get address : %d, dataout %d \n", dut->address, dut->dataout);
             }
         }
 

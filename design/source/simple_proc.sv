@@ -22,6 +22,7 @@ module simple_proc #(
 
   //definition of temp registers
   reg[width-1:0] reg_A, reg_B;
+  reg write_A, write_B;
 
   // int instr_def;
   //definition of instruction fields
@@ -76,10 +77,27 @@ module simple_proc #(
   begin
     PC = 0;            // start program
   end
-  //main cycle for one instruction
-  always @ (edge clk,  negedge nrst)
-  begin         // execution time of one instruction
 
+  always @(write_A)
+  begin
+    if(write_A)
+    begin
+      reg_A <= datain;
+    end
+  end
+
+  always @(write_B)
+  begin
+    if(write_B)
+    begin
+      reg_B <= datain;
+    end
+  end
+
+
+  //main cycle for one instruction
+  always @ (posedge clk,  negedge nrst)
+  begin         // execution time of one instruction
     if (!nrst)
     begin
       we = 1;
@@ -91,79 +109,84 @@ module simple_proc #(
     end
     else
     begin
-      #step
-       if(clk)
-       begin
-         IR = MEM[PC];     //instruction fetch
-         PC <= PC + 1;       //increment program counter
-       end
-       case(`OPCODE)
-         `NOP:
-           ;             //nothing to do
-         `BRA:
-         begin
-           if (SR[`CCODE]) //branch check condition flags
-             PC <= `BB;
-         end
-         `STR:
-           if (`IM)
-           begin           //store
-             dataout[11:0] = `AA;         //immediate
-             dataout[width-1:12] = '0;
-             address = `BB;
-             we = 1;
-           end
-           else
-           begin
-             dataout = MEM[`AA];    //direct
-             address = `BB;
-             we = 1;
-           end
-         `ADD:
-         begin
-           reg_A[`BB] = reg_A[`AA] + reg_B[`BB];
-           setcondcode(reg_B[`BB]);
-         end
-         `MUL:
-         begin
-           reg_A = reg_A * reg_B;
-           setcondcode(reg_B);
-         end
-         `CPL:
-         begin
-           if (`IM)                 //complement store
-             MEM[`BB] = ~`AA;         //immediate
-           else
-             MEM[`BB] = ~MEM[`AA];    //direct
-           setcondcode(MEM[`BB]);
-         end
-         `SHF:
-         begin
-           if (`SHL)                 //shift
-             MEM[`BB] = MEM[`BB] << `SHD;         //left
-           else
-             MEM[`BB] = MEM[`BB] >> `SHD;         //right
-           setcondcode(MEM[`BB]);
-         end
-         `LDA:
-         begin
-           address = `BB;
-           we = 0; // read
-           reg_A = datain;
-         end
-         `LDB:
-         begin
+      IR = MEM[PC];     //instruction fetch
+      PC <= PC + 1;       //increment program counter
+      write_A <= 0;
+      write_B <= 0;
+      case(`OPCODE)
+        `NOP:
+          ;             //nothing to do
+        `BRA:
+        begin
+          if (SR[`CCODE]) //branch check condition flags
+            PC <= `BB;
+        end
+        `STR:
+          if (`IM)
+          begin           //store
+            dataout[11:0] = `AA;         //immediate
+            dataout[width-1:12] = '0;
             address = `BB;
-            we = 0; // read
-            reg_B = datain;
-         end
-         `HLT:
-           $finish ;                   // halt
-         default:
-           $display("erreur: mauvaise valeur dans op-code");
-       endcase
-     end
-   end
+            we = 1;
+          end
+          else
+          begin
+            case (`AA)
+              0:
+                dataout = reg_A;    //direct
+              1:
+                dataout = reg_B;
+            endcase
+            address = `BB;
+            we = 1;
+          end
+        `ADD:
+        begin
+          reg_A[`BB] = reg_A[`AA] + reg_B[`BB];
+          setcondcode(reg_B[`BB]);
+        end
+        `MUL:
+        begin
+          reg_A = reg_A * reg_B;
+          setcondcode(reg_B);
+        end
+        `CPL:
+        begin
+          if (`IM)                 //complement store
+            MEM[`BB] = ~`AA;         //immediate
+          else
+            MEM[`BB] = ~MEM[`AA];    //direct
+          setcondcode(MEM[`BB]);
+        end
+        `SHF:
+        begin
+          if (`SHL)                 //shift
+            MEM[`BB] = MEM[`BB] << `SHD;         //left
+          else
+            MEM[`BB] = MEM[`BB] >> `SHD;         //right
+          setcondcode(MEM[`BB]);
+        end
+        `LDA:
+        begin
+          address = `BB;
+          we = 0; // read
+          //reg_A = datain;
+          write_A <= 1;
+        end
+        `LDB:
+        begin
+          address = `BB;
+          we = 0; // read
+          //reg_B = datain;
+          write_B <= 1;
+        end
+        `HLT:
+          $finish ;                   // halt
+        default:
+          $display("erreur: mauvaise valeur dans op-code");
+      endcase
+    end
+  end
 
- endmodule
+endmodule
 
