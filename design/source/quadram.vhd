@@ -20,11 +20,14 @@ end entity sync_quadram;
 architecture cell of sync_quadram is
 
     signal cs_ram         : unsigned(2**Nb_MSB-1 downto 0);
-    alias address_msb_in  : unsigned(Nb_MSB-1 downto 0) is address(ABus_Size-1 downto ABus_Size-Nb_MSB);
-    alias address_in      : unsigned(ABus_Size-Nb_MSB-1 downto 0) is address(ABus_Size-Nb_MSB-1 downto 0);
-
+    signal address_msb_in  : unsigned(Nb_MSB-1 downto 0);
+    signal address_in      : unsigned(ABus_Size-Nb_MSB-1 downto 0);
 begin  
+  
+    address_msb_in <= address(ABus_Size-1 downto ABus_Size-Nb_MSB);
+    address_in <= address(ABus_Size-Nb_MSB-1 downto 0);
 
+  
     Decoder: entity work.Address_Decoder(decoder)
     generic map (Nb_MSB)
     port map (

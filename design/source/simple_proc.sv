@@ -3,7 +3,6 @@ module simple_proc #(
     // asic processor plus memory
     //declaration of parameters
     parameter
-    step = 10,        // execution time of one instruction
     width = 32,       // data bus width
     addrsize = 8,    // address bus width (8 so that it does not crash with Verilator)
     memsize = 1<<addrsize,  // memory size
@@ -15,7 +14,7 @@ module simple_proc #(
       output reg [addrsize-1:0]address ,
       output reg [width-1:0]dataout);
 
-  reg[width-1:0] MEM[0:memsize-1]; // memory declaration
+  reg[width-1:0] MEM[0:memsize-1];  // memory declaration
   reg [width-1:0]IR;                // instruction register declaration
   reg[sbits-1:0] SR;                // status register
   reg[addrsize-1:0] PC;             // program counter
@@ -48,8 +47,9 @@ module simple_proc #(
 `define CPL 4'b0101             // complement
 `define ADD 4'b0110             // add
 `define MUL 4'b0111             // multiply
-`define LDA 4'b1000				// load into reg_A
-`define LDB 4'b1001				// load into reg_B
+`define LDA 4'b1000		          // load into reg_A
+`define LDB 4'b1001		          // load into reg_B
+`define FSH 4'b1111		          // flush
 
   //condition code and status bit position
 `define ALWAYS    0
@@ -76,6 +76,7 @@ module simple_proc #(
   initial
   begin
     PC = 0;            // start program
+    $readmemh ("instr.txt", MEM);
   end
 
   always @(write_A)
@@ -96,7 +97,7 @@ module simple_proc #(
 
 
   //main cycle for one instruction
-  always @ (posedge clk,  negedge nrst)
+  always @ (posedge clk)
   begin         // execution time of one instruction
     if (!nrst)
     begin
@@ -141,31 +142,31 @@ module simple_proc #(
             we = 1;
           end
         `ADD:
-        begin
-          reg_A[`BB] = reg_A[`AA] + reg_B[`BB];
-          setcondcode(reg_B[`BB]);
-        end
-        `MUL:
-        begin
-          reg_A = reg_A * reg_B;
-          setcondcode(reg_B);
-        end
-        `CPL:
-        begin
-          if (`IM)                 //complement store
-            MEM[`BB] = ~`AA;         //immediate
-          else
-            MEM[`BB] = ~MEM[`AA];    //direct
-          setcondcode(MEM[`BB]);
-        end
-        `SHF:
-        begin
-          if (`SHL)                 //shift
-            MEM[`BB] = MEM[`BB] << `SHD;         //left
-          else
-            MEM[`BB] = MEM[`BB] >> `SHD;         //right
-          setcondcode(MEM[`BB]);
-        end
+         begin
+           reg_A = reg_A + reg_B;
+           setcondcode(reg_B);
+         end
+         `MUL:
+         begin
+           reg_A = reg_A * reg_B;
+           setcondcode(reg_B);
+         end
+         `CPL:
+         begin
+           if (`IM)                 //complement store
+             reg_B = ~`AA;         //immediate
+           else
+             reg_B = ~reg_A;    //direct
+           setcondcode(reg_B);
+         end
+         `SHF:
+         begin
+           if (`SHL)                 //shift
+             reg_B = reg_B << `SHD;         //left
+           else
+             reg_B = reg_B >> `SHD;         //right
+           setcondcode(reg_B);
+         end
         `LDA:
         begin
           address = `BB;
@@ -180,13 +181,17 @@ module simple_proc #(
           //reg_B = datain;
           write_B <= 1;
         end
-        `HLT:
-          $finish ;                   // halt
-        default:
-          $display("erreur: mauvaise valeur dans op-code");
-      endcase
-    end
-  end
+        `FSH:
+         begin
+            reg_A = '0;
+            reg_B = '0;
+         end
+         `HLT:
+           $stop;                   // halt
+         default:
+           $display("error in op-code");
+       endcase
+     end
+   end
 
-endmodule
-
+ endmodule

@@ -1,0 +1,25 @@
+38002002 // STR immediate value 2 at address 2 (ram 0)
+20000000 // NOP
+38004004 // STR immediate value 4 at address 4 (ram 0)
+20000000 // NOP
+80000002 // LDA value from address 2
+20000000 // NOP
+90000004 // LDB value from address 4
+20000000 // NOP
+60000000 // ADD values from registers A and B
+30000006 // STR value from register A at address 6 (ram 0)
+20000000 // NOP
+F0000000 // FSH flush registers
+20000000 // NOP
+38003003 // STR immediate value 3 at address 3 (ram 0)
+20000000 // NOP
+38005084 // STR immediate value 5 at address 4 (ram 1)
+20000000 // NOP
+80000003 // LDA value from address 3
+20000000 // NOP
+90000084 // LDB value from address 4
+20000000 // NOP
+70000000 // MUL values from registers A and B
+30000086 // STR value from register A at address 6 (ram 1)
+20000000 // NOP
+00000000 // HLT
