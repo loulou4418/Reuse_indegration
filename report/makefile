@@ -1,6 +1,6 @@
 SOURCE = main
 OUT_DIR = ./temp
-LATEX_CMD = latex -output-format='pdf' -output-directory=$(OUT_DIR) $(SOURCE).tex
+LATEX_CMD = latex -output-format='pdf' -output-directory=$(OUT_DIR) $(SOURCE).tex -no-shell-escape
 
 draw_src = $(shell find ./figure/ -type f -name "*.draw.svg")
 draw_target = $(draw_src:./figure/%.draw.svg=./figure/%.draw.png)
