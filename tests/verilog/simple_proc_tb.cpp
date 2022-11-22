@@ -156,7 +156,7 @@ int main(int argc, char **argv, char **env)
             }
         }
 
-        /* assert first MUL test */
+        /* assert second STR test */
         if (dut->simple_proc__DOT__IR == STR2.val)
         {
             if ((dut->address == START_DATA_SEGMENT + 2) &&

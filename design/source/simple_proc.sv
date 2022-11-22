@@ -76,16 +76,15 @@ module simple_proc #(
   initial
   begin
     PC = 0;            // start program
-    $readmemh ("instr.txt", MEM);
+    // $readmemh ("instr.txt", MEM);
   end
 
   always @(write_A)
   begin
     if(write_A)
-    begin
       reg_A <= datain;
-    end
   end
+  
 
   always @(write_B)
   begin
@@ -144,28 +143,28 @@ module simple_proc #(
         `ADD:
          begin
            reg_A = reg_A + reg_B;
-           setcondcode(reg_B);
+           setcondcode(reg_A);
          end
          `MUL:
          begin
            reg_A = reg_A * reg_B;
-           setcondcode(reg_B);
+           setcondcode(reg_A);
          end
          `CPL:
          begin
            if (`IM)                 //complement store
-             reg_B = ~`AA;         //immediate
+             reg_A = ~`AA;         //immediate
            else
-             reg_B = ~reg_A;    //direct
-           setcondcode(reg_B);
+             reg_A = ~reg_A;    //direct
+           setcondcode(reg_A);
          end
          `SHF:
          begin
            if (`SHL)                 //shift
-             reg_B = reg_B << `SHD;         //left
+             reg_A = reg_A << `SHD;         //left
            else
-             reg_B = reg_B >> `SHD;         //right
-           setcondcode(reg_B);
+             reg_A = reg_A >> `SHD;         //right
+           setcondcode(reg_A);
          end
         `LDA:
         begin
