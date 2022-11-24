@@ -14,14 +14,14 @@ module simple_proc #(
       output reg [addrsize-1:0]address ,
       output reg [width-1:0]dataout);
 
-  reg[width-1:0] MEM[0:memsize-1];  // memory declaration
+  reg[width-1:0] MEM[0:memsize-1]; // memory declaration
   reg [width-1:0]IR;                // instruction register declaration
   reg[sbits-1:0] SR;                // status register
   reg[addrsize-1:0] PC;             // program counter
 
   //definition of temp registers
   reg[width-1:0] reg_A, reg_B;
-  reg write_A, write_B;
+  reg t_wait;
 
   // int instr_def;
   //definition of instruction fields
@@ -47,9 +47,9 @@ module simple_proc #(
 `define CPL 4'b0101             // complement
 `define ADD 4'b0110             // add
 `define MUL 4'b0111             // multiply
-`define LDA 4'b1000		          // load into reg_A
-`define LDB 4'b1001		          // load into reg_B
-`define FSH 4'b1111		          // flush
+`define LDA 4'b1000		// load into reg_A
+`define LDB 4'b1001		// load into reg_B
+`define FSH 4'b1111		// flush
 
   //condition code and status bit position
 `define ALWAYS    0
@@ -76,24 +76,8 @@ module simple_proc #(
   initial
   begin
     PC = 0;            // start program
-    // $readmemh ("instr.txt", MEM);
+    $readmemh ("instr.txt", MEM);
   end
-
-  always @(write_A)
-  begin
-    if(write_A)
-      reg_A <= datain;
-  end
-  
-
-  always @(write_B)
-  begin
-    if(write_B)
-    begin
-      reg_B <= datain;
-    end
-  end
-
 
   //main cycle for one instruction
   always @ (posedge clk)
@@ -106,13 +90,20 @@ module simple_proc #(
       reg_A = '0;
       reg_B = '0;
       SR = 'b00000001; // one for always flag
+      t_wait <= 0;
     end
     else
     begin
-      IR = MEM[PC];     //instruction fetch
-      PC <= PC + 1;       //increment program counter
-      write_A <= 0;
-      write_B <= 0;
+      if (t_wait)
+      begin
+        IR = MEM[PC-1];     //instruction fetch
+        $diplay("IR = PC-1");
+      end
+      else 
+      begin       
+        PC <= PC + 1;       //increment program counter
+        IR = MEM[PC];     //instruction fetch
+      end
       case(`OPCODE)
         `NOP:
           ;             //nothing to do
@@ -122,12 +113,19 @@ module simple_proc #(
             PC <= `BB;
         end
         `STR:
+
           if (`IM)
           begin           //store
             dataout[11:0] = `AA;         //immediate
             dataout[width-1:12] = '0;
             address = `BB;
             we = 1;
+                      if (!t_wait) begin
+            t_wait <= 1;
+          end
+          else begin
+            t_wait <= 0;
+          end
           end
           else
           begin
@@ -139,46 +137,58 @@ module simple_proc #(
             endcase
             address = `BB;
             we = 1;
+                      if (!t_wait) begin
+            t_wait <= 1;
+          end
+          else begin
+            t_wait <= 0;
+          end
           end
         `ADD:
          begin
            reg_A = reg_A + reg_B;
-           setcondcode(reg_A);
+           setcondcode(reg_B);
          end
          `MUL:
          begin
            reg_A = reg_A * reg_B;
-           setcondcode(reg_A);
+           setcondcode(reg_B);
          end
          `CPL:
          begin
            if (`IM)                 //complement store
-             reg_A = ~`AA;         //immediate
+             reg_B = ~`AA;         //immediate
            else
-             reg_A = ~reg_A;    //direct
-           setcondcode(reg_A);
+             reg_B = ~reg_A;    //direct
+           setcondcode(reg_B);
          end
          `SHF:
          begin
            if (`SHL)                 //shift
-             reg_A = reg_A << `SHD;         //left
+             reg_B = reg_B << `SHD;         //left
            else
-             reg_A = reg_A >> `SHD;         //right
-           setcondcode(reg_A);
+             reg_B = reg_B >> `SHD;         //right
+           setcondcode(reg_B);
          end
         `LDA:
         begin
           address = `BB;
           we = 0; // read
-          //reg_A = datain;
-          write_A <= 1;
+          reg_A = datain;
+          if (!t_wait)
+            t_wait <= 1;
+          else
+            t_wait <= 0;
         end
         `LDB:
         begin
           address = `BB;
           we = 0; // read
-          //reg_B = datain;
-          write_B <= 1;
+          reg_B = datain;
+          if (!t_wait)
+            t_wait <= 1;
+          else
+            t_wait <= 0;
         end
         `FSH:
          begin
