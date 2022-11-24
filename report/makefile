@@ -7,7 +7,7 @@ draw_target = $(draw_src:./figure/%.draw.svg=./figure/%.draw.png)
 #https://unix.stackexchange.com/questions/140912/no-target-error-using-make
 
 
-./$(OUT_DIR)/$(SOURCE).aux: $(SOURCE).tex ./texContent/* $(draw_target)
+./$(OUT_DIR)/$(SOURCE).aux: *.tex ./texContent/* $(draw_target)
 	$(LATEX_CMD)
 	bibtex ./$(OUT_DIR)/$(SOURCE)
 	bib2gls ./$(OUT_DIR)/$(SOURCE)

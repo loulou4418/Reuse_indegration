@@ -76,7 +76,7 @@ module simple_proc #(
   initial
   begin
     PC = 0;            // start program
-    $readmemh ("instr.txt", MEM);
+    //$readmemh ("instr.txt", MEM);
   end
 
   //main cycle for one instruction
@@ -97,10 +97,9 @@ module simple_proc #(
       if (t_wait)
       begin
         IR = MEM[PC-1];     //instruction fetch
-        $diplay("IR = PC-1");
       end
-      else 
-      begin       
+      else
+      begin
         PC <= PC + 1;       //increment program counter
         IR = MEM[PC];     //instruction fetch
       end
@@ -113,19 +112,20 @@ module simple_proc #(
             PC <= `BB;
         end
         `STR:
-
           if (`IM)
           begin           //store
             dataout[11:0] = `AA;         //immediate
             dataout[width-1:12] = '0;
             address = `BB;
             we = 1;
-                      if (!t_wait) begin
-            t_wait <= 1;
-          end
-          else begin
-            t_wait <= 0;
-          end
+            if (!t_wait)
+            begin
+              t_wait <= 1;
+            end
+            else
+            begin
+              t_wait <= 0;
+            end
           end
           else
           begin
@@ -137,70 +137,77 @@ module simple_proc #(
             endcase
             address = `BB;
             we = 1;
-                      if (!t_wait) begin
-            t_wait <= 1;
-          end
-          else begin
-            t_wait <= 0;
-          end
+            if (!t_wait)
+            begin
+              t_wait <= 1;
+            end
+            else
+            begin
+              t_wait <= 0;
+            end
           end
         `ADD:
-         begin
-           reg_A = reg_A + reg_B;
-           setcondcode(reg_B);
-         end
-         `MUL:
-         begin
-           reg_A = reg_A * reg_B;
-           setcondcode(reg_B);
-         end
-         `CPL:
-         begin
-           if (`IM)                 //complement store
-             reg_B = ~`AA;         //immediate
-           else
-             reg_B = ~reg_A;    //direct
-           setcondcode(reg_B);
-         end
-         `SHF:
-         begin
-           if (`SHL)                 //shift
-             reg_B = reg_B << `SHD;         //left
-           else
-             reg_B = reg_B >> `SHD;         //right
-           setcondcode(reg_B);
-         end
+        begin
+          reg_A = reg_A + reg_B;
+          setcondcode(reg_B);
+        end
+        `MUL:
+        begin
+          reg_A = reg_A * reg_B;
+          setcondcode(reg_B);
+        end
+        `CPL:
+        begin
+          if (`IM)                 //complement store
+            reg_B = ~`AA;         //immediate
+          else
+            reg_B = ~reg_A;    //direct
+          setcondcode(reg_B);
+        end
+        `SHF:
+        begin
+          if (`SHL)                 //shift
+            reg_B = reg_B << `SHD;         //left
+          else
+            reg_B = reg_B >> `SHD;         //right
+          setcondcode(reg_B);
+        end
         `LDA:
         begin
           address = `BB;
           we = 0; // read
-          reg_A = datain;
+
           if (!t_wait)
             t_wait <= 1;
           else
+          begin
+            reg_A = datain;
             t_wait <= 0;
+          end
         end
         `LDB:
         begin
           address = `BB;
           we = 0; // read
-          reg_B = datain;
           if (!t_wait)
             t_wait <= 1;
           else
+          begin
+            reg_B = datain;
             t_wait <= 0;
+          end
         end
         `FSH:
-         begin
-            reg_A = '0;
-            reg_B = '0;
-         end
-         `HLT:
-           $stop;                   // halt
-         default:
-           $display("error in op-code");
-       endcase
-     end
-   end
+        begin
+          reg_A = '0;
+          reg_B = '0;
+        end
+        `HLT:
+          $stop;                   // halt
+        default:
+          $display("error in op-code");
+      endcase
+    end
+  end
 
- endmodule
+endmodule

@@ -2,14 +2,14 @@
 
 \indent Cette première partie traite de la génération du bloc mémoire fonctionnel.
 L'objectif est d'obtenir un bloc contenant un nombre générique de mémoires ainsi qu'un décodeur pour en gérer l'accès, via des signaux \textit{Chip Select}. \\
-\indent Comme indiqué lors de l'introduction, pour chaque sub module du bloc mémoire, des bancs de test ont été réalisé grâce à Cocotb, \textit{"COroutine based COsimulation TestBench"}, un environnement de vérification VHDL et SystemVerilog basé sur le langage Python.
+\indent Comme indiqué lors de l'introduction, pour chaque sous module du bloc mémoire, des bancs de test ont été réalisé grâce à Cocotb, \textit{"COroutine based COsimulation TestBench"}, un environnement de vérification VHDL et SystemVerilog basé sur le langage Python.
 C'est un outil open source que nous avons couplé à ghdl pour la compilation du VHDL et à gtkwave pour afficher les résultats.
 Il a été spécifiquement pensé pour réduire le temps d'écriture de bancs de tests et prône la réutilisation de designs, philosophie appropriée pour le module ME2.
 
 \subsection{Récupération d'une IP de RAM}
 
 \indent Il nous a été fourni un modèle simple de mémoire RAM.
-La première tache vise à comprendre son fonctionnement puis de trouver une solution afin de rendre son implémentation générique tant sur la taille des données que sur l'adresse.
+La première tache vise à comprendre son fonctionnement puis à trouver une solution afin de rendre son implémentation générique tant sur la taille des données que sur l'adresse.
 Le modèle récupéré génère une RAM par un tableau de vecteurs d'une taille variable selon la taille du bus d'adresses.
 
 \begin{figure}[h]
@@ -32,7 +32,7 @@ Nous avons pu générer un banc de test avec Cocotb qui consistent à tester l'�
 \indent Sur la figure ci-dessus, nous pouvons vérifier le comportement de la mémoire.
 Dans un premier temps, des valeurs sont écrites en mémoire (\textit{we} = 1) avec des variations du signal \textit{cs} pour vérifier si les écritures ont lieu ou non.
 Dans un deuxième temps, des cycles de lecture s'enchaînent aux mêmes adresses pour vérifier le contenu de la RAM.
-En jouant également sur la valeur du signal\textit{cs}, nous pouvons voir que la sortie est indéfinie lorsque \textit{cs} = 0, que la valeur contenue en adress 20 de la RAM est correctement lue, et que l'adress 339 est indéfinie puisque \textit{cs} n'était pas actif lors de l'écriture.
+En jouant également sur la valeur du signal \textit{cs}, nous pouvons voir que la sortie est indéfinie lorsque \textit{cs} = 0, que la valeur contenue en adresse 20 de la RAM est correctement lue, et que l'adress 339 est indéfinie puisque \textit{cs} n'était pas actif lors de l'écriture.
 
 \subsection{Décodeur d'adresse}
 
@@ -45,8 +45,8 @@ En jouant également sur la valeur du signal\textit{cs}, nous pouvons voir que l
 	\label{fig:synth_bloc_decodeur}
 \end{figure}
 
-\indent Le décodeur fonctionne de façon purement combinatoire: le fonctionnement interne est simplement un décalage à gauche d'un bus de taille $ 2^{n} $ et de valeur initiale 1; le nombre de décalages effectués est égal à la valeur des bits d'entrée et il y a $ 2^{n} $ valeurs possibles.
-Le banc de test est élémentaire: il suffit de tester les $ 2^{n} $ entrées possibles, n étant le nombre de vits de poids fort pris en considération. Via l'utilisation de Cocotb, il est aisé de vérifier les sorties pour des n différents (ci-dessous, les tests pour n = 2 et n = 3).
+\indent Le décodeur fonctionne de façon purement combinatoire : le fonctionnement interne est simplement un décalage à gauche d'un bus de taille $ 2^{n} $ et de valeur initiale 1; le nombre de décalages effectués est égal à la valeur des bits d'entrée et il y a $ 2^{n} $ valeurs possibles.
+Le banc de test est élémentaire : il suffit de tester les $ 2^{n} $ entrées possibles, n étant le nombre de bits de poids fort pris en considération. Via l'utilisation de Cocotb, il est aisé de vérifier les sorties pour des n différents (ci-dessous, les tests pour n = 2 et n = 3).
 
 \begin{figure}[h]
 	\centering
@@ -75,7 +75,7 @@ Le banc de test est élémentaire: il suffit de tester les $ 2^{n} $ entrées po
 
 \indent Le bloc Quadram est le top module du bloc mémoire.
 Il ne contient en réalité que des générations d'instances de RAM et du décodeur, toujours d'une façon générique suivant la taille du bus d'adresse et du bus de données.
-Il n'est pas possible de déterminer manuellement le nombre de bloc RAM instancié, celui-ci est en effet calculé suivant le nombre de bits de poids forts pris en compte: pour n-bits, il y aura $ 2^{n} $ cellules RAM. Cette implémentation est choisie car calculer un log de 2 avec des composants matériels rajoutent une complexité non souhaitée à l'application.
+Il n'est pas possible de déterminer manuellement le nombre de blocs RAM instancié, celui-ci est en effet calculé suivant le nombre de bits de poids forts pris en compte : pour n-bits, il y aura $ 2^{n} $ cellules RAM. Cette implémentation est choisie car calculer un log de 2 avec des composants matériels rajoutent une complexité non souhaitée à l'application.
 
 \begin{figure}[h]
 	\centering

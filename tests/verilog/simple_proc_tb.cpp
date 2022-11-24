@@ -86,7 +86,7 @@ int main(int argc, char **argv, char **env)
             dut->nrst = 1;
         }
 
-         dut->datain = 0x0; /* set datain to zero if not written later */
+         //dut->datain = 0x0; /* set datain to zero if not written later */
 
         /* assert first STR test */
         if (dut->simple_proc__DOT__IR == STR.val && dut->clk == 1)
@@ -105,12 +105,11 @@ int main(int argc, char **argv, char **env)
 
         /* assert first LDA test
             The memory delay is simulated by seting the value on of datain on rising edge */
-        if (dut->simple_proc__DOT__IR == LDA.val && dut->clk == 0)
+        if (dut->simple_proc__DOT__IR == LDA.val && dut->clk == 1)
         {
             if (dut->we == 0 && dut->address == 0x78)
             {
                 dut->datain = 0x19; /* give ram cell value */
-                dut->eval();
 
                 if (dut->simple_proc__DOT__reg_A == 0x19)
                 {
@@ -125,12 +124,11 @@ int main(int argc, char **argv, char **env)
 
         /* assert first LDB test
     The memory delay is simulated by seting the value on of datain on rising edge */
-        if (dut->simple_proc__DOT__IR == LDB.val && dut->clk == 0)
+        if (dut->simple_proc__DOT__IR == LDB.val && dut->clk == 1)
         {
             if (dut->we == 0 && dut->address == 0x91)
             {
                 dut->datain = 0x02; /* give ram cell value */
-                dut->eval();
 
                 if (dut->simple_proc__DOT__reg_B == 0x02)
                 {

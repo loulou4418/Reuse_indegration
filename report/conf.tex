@@ -29,44 +29,57 @@
 
 %% User style for C
 
-% \usepackage{color}
-% \usepackage{xcolor}
+\usepackage{color}
+\usepackage{xcolor}
 
-% \definecolor{mGreen}{rgb}{0,0.6,0}
-% \definecolor{mGray}{rgb}{0.5,0.5,0.5}
-% \definecolor{mPurple}{rgb}{0.58,0,0.82}
-% \definecolor{backgroundColour}{rgb}{0.95,0.95,0.95}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.95}
 
-% \lstdefinestyle{CStyle}{
-%     language=C,
-%     tabsize=4,
-%     captionpos=b,
-%     numbers=left,
-%     commentstyle=\color{mGreen},
-%     backgroundcolor=\color{white},
-%     numberstyle=\color{gray},
-%     keywordstyle=\color{blue} \textbf,%otherkeywords={xdata},
-%     keywords=[2]{xdata},
-%     keywordstyle=[2]\color{red}\textbf,
-%     identifierstyle=\color{black},
-%     stringstyle=\color{red}\ttfamily,
-%     basicstyle = \ttfamily \color{black} \footnotesize,
-%     inputencoding=utf8/latin1,
-%     showstringspaces=false,
-%     frame=single,
-%     morekeywords={uint32_t, uint16_t, uint8_t, Tc, Dac, Port, inline, state_t,
-%     uticks_t, atomic, endatomic,
-%     @brief}
-% }
+\lstdefinestyle{CStyle}{
+    language=C,
+    tabsize=4,
+    captionpos=b,
+    numbers=left,
+    commentstyle=\color{mGreen},
+    backgroundcolor=\color{white},
+    numberstyle=\color{gray},
+    keywordstyle=\color{blue} \textbf,%otherkeywords={xdata},
+    keywords=[2]{xdata},
+    keywordstyle=[2]\color{red}\textbf,
+    identifierstyle=\color{black},
+    stringstyle=\color{red}\ttfamily,
+    basicstyle = \ttfamily \color{black} \footnotesize,
+    inputencoding=utf8/latin1,
+    showstringspaces=false,
+    frame=single,
+    morekeywords={uint32_t, uint16_t, uint8_t, Tc, Dac, Port, inline, state_t,
+    uticks_t, atomic, endatomic,
+    @brief}
+}
 
-
-
-
-
-
-
-
-
+\lstdefinelanguage{VHDL}{
+  morekeywords={
+    library,use,all,entity,is,port,in,out,end,architecture,of,
+    begin,and, always, posedge
+  },
+  morecomment=[l]--
+}
+\lstdefinestyle{vhdl}{
+  language     = VHDL,
+  frame=single,
+  tabsize=4,
+  captionpos=b,
+  numbers=left,
+  commentstyle=\color{mGreen},
+  backgroundcolor=\color{white},
+  numberstyle=\color{gray},
+  keywordstyle=\color{blue} \textbf,
+  basicstyle = \ttfamily \color{black} \footnotesize,
+  numbers=left,
+  showstringspaces=false
+}
 
 % the glossary definition needs to be in .sty
 % Seems to be because of different directories
