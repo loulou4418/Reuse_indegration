@@ -44,7 +44,7 @@ architecture structure of proc_ram is
         dataout => DataToWrite
     );
 
-    ram: entity work.sync_ram(cell)
+    ram: entity work.sync_quadram(cell)
     generic map (dbus_size, abus_size, nb_msb)
     port map (
       clock   => clk,

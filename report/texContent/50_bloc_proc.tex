@@ -1,8 +1,8 @@
 \section{Modèle de processeur}
 
-Cette partie vise à présenter les modifications du processeur afin d'assembler un système complète avec les blocs \gls{RAM}.
+Cette partie vise à présenter les modifications du processeur afin d'assembler un système complet avec les blocs \gls{RAM}.
 Pour tester la mémoire réalisée dans la partie précédente, le sujet fourni imagine un modèle de processeur élémentaire.
-Cela permet à la fois de contextualiser le miniprojet tout en faisait appel aux connaissances d'architecture des ordinateurs vue les années passées.
+Cela permet à la fois de contextualiser le mini-projet tout en faisant appel aux connaissances d'architecture des ordinateurs vue les années passées.
 Un modèle de processeur appelé \texttt{simple proc} est donné aux étudiants sous forme d'un code \textit{Verilog}.
 Il est composé d'une mémoire interne pour stocker les instructions et données, mais ne comporte aucune entrée sortie.
 Il n'est donc pas synthétisable, mais uniquement simulable.
@@ -12,9 +12,9 @@ Cela passe par l'ajout d'un certain nombre de signaux et par la modification de 
 
 Comme indiqué dans l'introduction, le logiciel \textit{Verilator} a été utilisé pour la simulation.
 Sa particularité est de transformer la description \textit{Verilog} en \textit{C++}.
-Le testbench peut être écrit en \textit{C++} offrant ainsi une vue plus haut niveau apprécié pour le test.
+Le testbench peut être écrit en \textit{C++} offrant ainsi une vue plus haut niveau appréciée pour le test.
 Le projet est largement utilisé dans le monde académique comme dans l'industrie.
-On peut ainsi voir RISC-V, Microchip, NXP, Intel parmi ses utilisateurs.
+On peut ainsi voir RISC-V Foundation, Microchip, NXP, Intel parmi ses utilisateurs.
 
 
 \subsection{Modification de l'architecture}
@@ -41,7 +41,7 @@ Tous les signaux définis sont présents. Les paramètres pour la longueur des b
 
 La seconde modification est nécessaire en raison du changement de mémoire.
 Le processeur est initialement conçu avec une mémoire interne.
-La contraire concernant l'usage d'une mémoire externe rend l'accès à la donnée impossible pour les opérations arithmétiques.
+La contrainte concernant l'usage d'une mémoire externe rend l'accès à la donnée impossible pour les opérations arithmétiques.
 Pour palier à cela, la solution est l'ajout de registres tampons d'une longueur égale à celle du bus de données.
 Leur politique de gestion est explicitement laissée libre dans le sujet.
 Les choix effectués par les étudiants concepteurs ne concernent pas la déclaration des registres, mais plutôt l'\gls{ISA}.
@@ -134,7 +134,7 @@ La première instruction, à l'index $[0]$ est donc un \texttt{STR}.
 /* assert STR test when IR reg == STR */
 if (dut->simple_proc__DOT__IR == STR.val && dut->clk == 1){ 
     if ((dut->address == 0x81) && (dut->dataout == 0xAF)){
-      printf("Succes asserting STR test 1 \n");
+      printf("Success asserting STR test 1 \n");
     }
     else{
       printf("STR failed. Addr:%d data:%d \n", dut->address, dut->dataout);
@@ -144,7 +144,7 @@ if (dut->simple_proc__DOT__IR == STR.val && dut->clk == 1){
 Le test pour vérifier la conformité de l'instruction s'attache à contrôler l'état du bus d'adresse et de donnée sachant l'instruction encodée.
 Le résultat du terminal est alors :
 \begin{lstlisting}[frame=single, basicstyle = \ttfamily \footnotesize]
-    Succes asserting STR test 1
+    Success asserting STR test 1
 \end{lstlisting}
 Une seconde confirmation avec les chronogrammes est effectuée.
 Elle confirme le premier diagnostique.\\
