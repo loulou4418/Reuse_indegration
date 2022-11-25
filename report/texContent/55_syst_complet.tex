@@ -2,7 +2,7 @@
 
 Le système complet, ou top module, instancie une Quadram décrite en VHDL et le processeur décrit en Verilog. Le top module a une horloge et le signal de reset en logique négative et en sortie, le bus de données. 
 Son comportement est décrit en VHDL; un composant est défini pour faire appel au module \textit{simple\_proc} correspondant au processeur.
-Pour conserver la générécité, il est possible de définir la taille du bus de données et du bus d'adresses, ainsi que le nombre de bits de poids fort à isoler pour le décodeur d'adresses. \\
+Pour conserver la généricité, il est possible de définir la taille du bus de données et du bus d'adresses, ainsi que le nombre de bits de poids fort à isoler pour le décodeur d'adresses. \\
 
 \subsection{Simulation}
 
@@ -28,7 +28,7 @@ Pour les tests, les paramètres ont été définis de la façon suivante:
 	\label{fig:wave_top_module}
 \end{figure}
 
-\indent Ce chronogramme correspond aux instructions executées pour obtenir le résultat de l'addition 2 + 4 en mémoire.
+\indent Ce chronogramme correspond aux instructions exécutées pour obtenir le résultat de l'addition 2 + 4 en mémoire.
 Nous pouvons observer les deux coups d'horloge nécessaires pour les instructions \textit{Load} et \textit{Store}, permis par l'activation du signal \textit{wait}.
 En mémoire, les valeurs apparaissent de manière séquentielle au fur et à mesure que les instructions s'exécutent.
 Le résultat attendu (2 + 4 = 6) est retrouvé en mémoire à l'adresse souhaitée.
@@ -56,15 +56,40 @@ Ci-dessous le fichier .txt des instructions chargées en mémoire.
 
 \subsection{Analyse RTL du module}
 
-\indent Tout au long du rapports, des blocs au niveau \gls{RTL} des différents blocs ont été utilisé à des fins d'illustration.
-Ces blocs étaient issus de la synthèse du top module réalisée sous Vivado.
-Pour synthétiser le sytème, il a fallu retirer certains éléments non synthétisables du processeur notamment les commandes \textit{step} qui ajoutaient un offset de 10 ns ou encore les commandes ModelSim.
-
+\indent Tout au long du rapport, des blocs au niveau \gls{RTL} des différents blocs ont été utilisé à des fins d'illustration.
+Ces blocs étaient issus de l'analyse RTL du top module réalisée sous Vivado.
+Avant d'effectuer cette étape, nous avons retiré certains éléments non synthétisables du processeur notamment les commandes \textit{step} qui ajoutaient un offset de 10 ns ou encore les commandes ModelSim.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.97\linewidth]{synth_top_module.png}
 	\caption{Synthèse du top module}
-	\label{fig:synth_top_module}
+	\label{fig:synth_top_modul}
 \end{figure}
+Le résultat montre bien, les différentes entités du projet.
+On observe le processeur à gauche, le décodeur au centre et les 4 blocs \gls{RAM} à droite.
+Les interconnexions et notamment les bus sont particulièrement intéressants à visualiser.
 
+\subsection{Vue RTL du processeur}
+Lorsqu'on double clic sur le processeur de la figure \ref{fig:synth_top_modul} une vue détaillé apparaît.
+Elle représente, les circuits logiques de ce dernier.
+On peut alors identifier rapidement, les différents registres matérialisés par des vecteurs de bascules.
+On constate également un certain nombre de multiplexeurs pour décoder les instructions.
+Les éléments sont agencés de manière désorganisée il est difficile d'insérer une capture globale pertinente.
+Il est toutefois possible d'extraire les blocs un à un.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.35\linewidth]{PC_ADD_1.png}
+	\caption{Additionneur de PC vue RTL}
+	\label{fig:PC_ADD}
+\end{figure}
+La figure \ref{fig:PC_ADD} présente par exemple, l'additionneur de PC à chacun coup d'horloge.
+Le registre PC est incrémenté de la constante 1.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.35\linewidth]{add_mul_rtl.png}
+	\caption{Additionneur et multiplieur vue RTL}
+	\label{fig:ADD_MUL}
+\end{figure}
+Les opérations de l'\gls{ALU} sont également visibles comme le montre la figure \ref{fig:ADD_MUL}.
+Ils sont connectés aux registres et A est présent à la fois en entrée et en sortie comme souhaité.
 
