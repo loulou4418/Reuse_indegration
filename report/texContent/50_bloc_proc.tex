@@ -30,12 +30,12 @@ Il a été choisi précédemment de dupliquer le bus de données selon le sens d
 Le signal \texttt{we} pour "write enable" est utile pour contrôler la \gls{RAM} est déclarée comme sortie.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\linewidth]{entity_proc.png}
+    \includegraphics[width=0.5\linewidth]{entité_proc.png}
     \caption{Entité simple proc}
     \label{entity_proc}
 \end{figure}
 
-Après la synthèse, la vue externe obtenue figure \ref{entity_proc} est bien celle attendue.
+Après l'analyse RTL, la vue externe obtenue figure \ref{entity_proc} est bien celle attendue.
 Tous les signaux définis sont présents. Les paramètres pour la longueur des bus de données et d'adresse sont respectivement 32 et 12 dans cet exemple. \\
 \gap
 
